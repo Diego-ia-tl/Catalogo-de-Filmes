@@ -130,6 +130,8 @@ main {
 .movie:hover .movie-desc {
     max-height: 100px; /* Expande suavemente */
     padding-top: 10px;
+}
+.movie {
     position: relative;
     overflow: hidden;
 }
