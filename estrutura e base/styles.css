@@ -101,3 +101,55 @@ main {
     color: #bbb;
     margin-top: 5px;
 }
+.movie {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.movie img {
+    transition: transform 0.3s ease-in-out;
+}
+
+.movie:hover img {
+    transform: scale(1.05);
+}
+
+.movie-desc {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+    padding: 0 10px;
+    text-align: center;
+    font-size: 14px;
+    color: #bbb;
+}
+
+.movie:hover .movie-desc {
+    max-height: 100px; /* Expande suavemente */
+    padding-top: 10px;
+    position: relative;
+    overflow: hidden;
+}
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.movie {
+    opacity: 0;
+    animation: fadeIn 0.8s ease-in-out forwards;
+}
+.highlight {
+    background-color: yellow;
+    color: black;
+    font-weight: bold;
+}

@@ -24,5 +24,54 @@ function displayMovies() {
         movieList.appendChild(movieDiv);
     });
 }
+document.addEventListener("DOMContentLoaded", () => {
+    const movieList = document.getElementById("movie-list");
+
+    movieList.addEventListener("click", (e) => {
+        let movie = e.target.closest(".movie");
+        if (movie) {
+            movie.classList.toggle("expanded");
+        }
+    });
+});
+function displayMovies() {
+    const movieList = document.getElementById("movie-list");
+    movieList.innerHTML = "";
+
+    movies.forEach((movie, index) => {
+        const movieDiv = document.createElement("div");
+        movieDiv.classList.add("movie");
+        movieDiv.style.animationDelay = `${index * 0.2}s`; // Aparece um por vez
+
+        movieDiv.innerHTML = `
+            <img src="${movie.image}" alt="${movie.title}">
+            <h2>${movie.title}</h2>
+            <p class="movie-desc">${movie.description}</p>
+        `;
+        movieList.appendChild(movieDiv);
+    });
+}
+function searchMovies() {
+    let input = document.getElementById("searchInput").value.toLowerCase();
+    const movieList = document.getElementById("movie-list");
+    movieList.innerHTML = "";
+
+    movies.forEach(movie => {
+        let titleLower = movie.title.toLowerCase();
+        if (titleLower.includes(input)) {
+            const movieDiv = document.createElement("div");
+            movieDiv.classList.add("movie");
+
+            let highlightedTitle = movie.title.replace(new RegExp(input, "gi"), match => `<span class="highlight">${match}</span>`);
+
+            movieDiv.innerHTML = `
+                <img src="${movie.image}" alt="${movie.title}">
+                <h2>${highlightedTitle}</h2>
+                <p class="movie-desc">${movie.description}</p>
+            `;
+            movieList.appendChild(movieDiv);
+        }
+    });
+}
 
 document.addEventListener("DOMContentLoaded", displayMovies);
