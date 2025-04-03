@@ -1,18 +1,21 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
+    
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo de Filmes</title>
     <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body> 
     <header>
         <h1>Catálogo de Filmes</h1>
         <input type="text" id="searchInput" placeholder="Buscar filme..." onkeyup="searchMovies()">
     </header>
-
+        <button id="menuToggle">☰</button>
+        <div id="sidebar">
+     <button id="themeToggle">Alternar Tema</button>
+        </div>
     <main id="movie-list">
     </main>
     <script src="filmes.js"></script>
