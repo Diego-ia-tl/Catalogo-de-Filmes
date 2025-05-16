@@ -246,7 +246,7 @@ main {
     border: none;
     cursor: pointer;
 }
-/* Estilizando o botão de menu */
+
 #menuToggle {
     position: fixed;
     top: 20px;
@@ -261,7 +261,6 @@ main {
     border-radius: 5px;
 }
 
-/* Sidebar Menu */
 #sidebar {
     position: fixed;
     left: -250px;
@@ -274,12 +273,11 @@ main {
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
 }
 
-/* Quando o menu estiver ativo */
+
 #sidebar.active {
     left: 0;
 }
 
-/* Botão dentro do menu */
 #themeToggle {
     display: block;
     width: 100%;
@@ -293,7 +291,6 @@ main {
     margin-top: 20px;
 }
 
-/* Estilização do Modo Escuro */
 .dark-mode {
     background-color: #ffffff;
     color: white;
