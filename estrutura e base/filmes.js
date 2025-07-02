@@ -30,7 +30,6 @@ function displayMovies(filteredMovies, showFav = true) {
             <img src="${movie.image}" alt="${movie.title}">
             <h2>${movie.title}</h2>
             <p class="movie-desc">${movie.description}</p>
-            <button class="trailer-button" onclick="window.open('${movie.link}', '_blank')">Ver Trailer</button>
             ${favBtn}`;
     movieList.appendChild(movieDiv);
   });
@@ -112,42 +111,79 @@ function searchMovies() {
     });
 }
 
-// Função para exibir favoritos
-function showFavorites() {
-  if (!currentUser || !currentUser.favorites || currentUser.favorites.length === 0) {
-    document.getElementById('favorites-list').innerHTML = '<p>Nenhum filme favoritado.</p>';
-    document.getElementById('favorites-section').style.display = 'block';
-    return;
+function showProfileModal() {
+  if (!currentUser) return;
+  const modal = document.getElementById('profileModal');
+  // Avatar
+  const avatarImg = document.getElementById('profileAvatarImg');
+  const avatarInitial = document.getElementById('profileAvatarInitial');
+  if (currentUser.photo) {
+    avatarImg.src = currentUser.photo;
+    avatarImg.style.display = 'block';
+    avatarInitial.style.display = 'none';
+  } else {
+    avatarImg.style.display = 'none';
+    avatarInitial.textContent = (currentUser.user || '?').charAt(0).toUpperCase();
+    avatarInitial.style.display = 'block';
   }
-  fetch(backendUrl)
-    .then(response => response.json())
-    .then(movies => {
-      // IDs podem ser string no JSON, então compara como string
-      const favMovies = movies.filter(m => (currentUser.favorites || []).map(String).includes(String(m.id)));
-      displayFavorites(favMovies);
-    });
+  // Nome e ID
+  document.getElementById('profileUserName').textContent = currentUser.user || '';
+  document.getElementById('profileUserId').textContent = 'ID: ' + (currentUser.id || '');
+  modal.style.display = 'flex';
 }
-
-function displayFavorites(favMovies) {
+// Exibe favoritos na barra lateral
+function showFavorites() {
+  if (!currentUser) return;
+  const favSection = document.getElementById('favorites-section');
   const favList = document.getElementById('favorites-list');
   favList.innerHTML = '';
-  favMovies.forEach(movie => {
-    const div = document.createElement('div');
-    div.classList.add('movie');
-    div.innerHTML = `
-      <img src="${movie.image}" alt="${movie.title}" style="width:80px;vertical-align:middle;">
-      <span style="font-weight:bold;">${movie.title}</span>
-      <button onclick="window.open('${movie.link}', '_blank')">Ver Trailer</button>
-    `;
-    favList.appendChild(div);
-  });
-  document.getElementById('favorites-section').style.display = 'block';
+  if (!currentUser.favorites || currentUser.favorites.length === 0) {
+    favList.innerHTML = '<p style="color:#bbb;">Nenhum filme favoritado.</p>';
+  } else {
+    fetch(backendUrl)
+      .then(response => response.json())
+      .then(movies => {
+        const favMovies = movies.filter(m => (currentUser.favorites || []).map(String).includes(String(m.id)));
+        favMovies.forEach(movie => {
+          const div = document.createElement('div');
+          div.classList.add('movie');
+          div.innerHTML = `
+            <img src="${movie.image}" alt="${movie.title}" style="width:60px;border-radius:6px;margin-bottom:6px;">
+            <span style="display:block;font-weight:bold;margin-bottom:4px;">${movie.title}</span>
+            <button onclick="window.open('${movie.link}', '_blank')">Ver Trailer</button>
+          `;
+          favList.appendChild(div);
+        });
+      });
+  }
+  favSection.style.display = 'flex';
+}
+
+function logout() {
+  localStorage.removeItem('currentUser');
+  currentUser = null;
+  updateFavoritesBtnVisibility();
+  updateLoginRegisterBtnVisibility();
+  fetchAndDisplayMovies();
+  document.getElementById('profileModal').style.display = 'none';
+  showProfilePic('');
 }
 
 document.addEventListener('DOMContentLoaded', function() {
   // Recupera usuário logado do localStorage
   currentUser = getUserFromStorage();
   updateFavoritesBtnVisibility();
+  updateLoginRegisterBtnVisibility();
+  updateProfileBtnVisibility();
+  // Botão de perfil
+  const profileBtn = document.getElementById('openProfile');
+  if (profileBtn) {
+    profileBtn.onclick = function() {
+      showProfileModal();
+      const modal = document.getElementById('profileModal');
+      if (modal) modal.style.display = 'flex';
+    };
+  }
   
   const menuToggle = document.getElementById('menuToggle');
   const sidebar = document.getElementById('sidebar');
@@ -174,7 +210,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const loginError = document.getElementById('loginError');
   openLogin.onclick = () => loginModal.style.display = 'flex';
   closeLogin.onclick = () => loginModal.style.display = 'none';
-  window.onclick = (e) => { if (e.target === loginModal) loginModal.style.display = 'none'; };
   
   
   function showProfilePic(photo) {
@@ -207,6 +242,8 @@ document.addEventListener('DOMContentLoaded', function() {
           setUserToStorage(found);
           fetchAndDisplayMovies();
           updateFavoritesBtnVisibility();
+          updateLoginRegisterBtnVisibility();
+          updateProfileBtnVisibility();
         } else {
           loginError.style.display = 'block';
         }
@@ -257,7 +294,13 @@ document.addEventListener('DOMContentLoaded', function() {
   let selectedProfilePic = '';
   openRegister.onclick = () => registerModal.style.display = 'flex';
   closeRegister.onclick = () => registerModal.style.display = 'none';
-  window.onclick = (e) => { if (e.target === registerModal) registerModal.style.display = 'none'; };
+  // Fechar modais ao clicar fora
+  window.addEventListener('click', function(e) {
+    if (e.target === loginModal) loginModal.style.display = 'none';
+    if (e.target === registerModal) registerModal.style.display = 'none';
+    const profileModal = document.getElementById('profileModal');
+    if (e.target === profileModal) profileModal.style.display = 'none';
+  });
   if (profileGallery) {
     profileGallery.querySelectorAll('.profile-pic-option').forEach(img => {
       img.onclick = function() {
@@ -341,16 +384,57 @@ document.addEventListener('DOMContentLoaded', function() {
   const favSection = document.getElementById('favorites-section');
   const closeFav = document.getElementById('closeFavorites');
   if (showFavBtn) {
-    showFavBtn.onclick = showFavorites;
+    showFavBtn.onclick = function() {
+      showFavorites();
+    };
   }
   if (closeFav) {
     closeFav.onclick = function() {
+      const favSection = document.getElementById('favorites-section');
       favSection.style.display = 'none';
+    };
+  }
+  // Botão de todos os filmes
+  const showAllBtn = document.getElementById('showAllMoviesBtn');
+  const allSection = document.getElementById('all-movies-section');
+  const closeAll = document.getElementById('closeAllMovies');
+  if (showAllBtn) {
+    showAllBtn.onclick = showAllMovies;
+  }
+  if (closeAll) {
+    closeAll.onclick = function() {
+      allSection.style.display = 'none';
     };
   }
   // Exibe botão de favoritos se logado
   if (currentUser) {
     showFavBtn.style.display = 'block';
+  }
+  // Perfil
+  const profilePic = document.getElementById('profilePic');
+  const profileModal = document.getElementById('profileModal');
+  const closeProfile = document.getElementById('closeProfile');
+  const logoutBtn = document.getElementById('logoutBtn');
+  if (profilePic) {
+    profilePic.onclick = showProfileModal;
+  }
+  if (closeProfile) {
+    closeProfile.onclick = function(e) {
+      e.preventDefault();
+      document.getElementById('profileModal').style.display = 'none';
+      return false;
+    };
+  }
+  if (logoutBtn) {
+    logoutBtn.onclick = function(e) {
+      e.preventDefault();
+      logout();
+      setTimeout(() => {
+        const modal = document.getElementById('profileModal');
+        if (modal) modal.style.display = 'none';
+      }, 100);
+      return false;
+    };
   }
 });
 
@@ -361,3 +445,32 @@ function updateFavoritesBtnVisibility() {
     showFavBtn.style.display = currentUser ? 'block' : 'none';
   }
 }
+
+// Atualiza exibição dos botões de Login e Cadastro
+function updateLoginRegisterBtnVisibility() {
+  const loginBtn = document.getElementById('openLogin');
+  const registerBtn = document.getElementById('openRegister');
+  const profileBtn = document.getElementById('openProfile');
+  if (loginBtn && registerBtn && profileBtn) {
+    if (currentUser) {
+      loginBtn.style.display = 'none';
+      registerBtn.style.display = 'none';
+      profileBtn.style.display = 'inline-block';
+    } else {
+      loginBtn.style.display = 'inline-block';
+      registerBtn.style.display = 'inline-block';
+      profileBtn.style.display = 'none';
+    }
+  }
+}
+
+// Atualiza visibilidade do botão de perfil ao logar/deslogar
+function updateProfileBtnVisibility() {
+  const profileBtn = document.getElementById('openProfile');
+  if (profileBtn) {
+    profileBtn.style.display = currentUser ? 'inline-block' : 'none';
+  }
+}
+
+// Força a exibição dos botões ao carregar a página
+window.addEventListener('DOMContentLoaded', updateLoginRegisterBtnVisibility);

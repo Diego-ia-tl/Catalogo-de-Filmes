@@ -1,3 +1,24 @@
+#closeProfile {
+  position: absolute;
+  top: 10px;
+  right: 18px;
+  background: none;
+  border: none;
+  font-size: 2.2rem;
+  color: #ff0000;
+  cursor: pointer;
+  z-index: 10;
+  transition: color 0.2s, background 0.2s, transform 0.2s;
+  font-weight: bold;
+  line-height: 1;
+  padding: 0 10px;
+}
+#closeProfile:hover {
+  color: #fff;
+  background: #ff0000;
+  border-radius: 50%;
+  transform: scale(1.15);
+}
 * {
     margin: 0;
     padding: 0;
@@ -314,23 +335,93 @@ main {
     color: rgb(0, 0, 0);
 }
 .modal {
+  display: none;
   position: fixed;
-    z-index: 2000;
-    left: 0; top: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.7);
-    display: flex; align-items: center; justify-content: center;
+  z-index: 2000;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: auto;
+  background: rgba(0,0,0,0.7);
+  align-items: center;
+  justify-content: center;
 }
 .modal-content {
-     background: linear-gradient(135deg, #222 60%, #7a3737 100%);
-     padding: 30px 40px;
-     border-radius: 12px;
-     color: #fff;
-     min-width: 320px;
-     box-shadow: 0 0 30px #000;
-     position: relative;
-     border: 2px solid #ff0000;
-     animation: fadeInModal 0.5s;
+  background: #232323;
+  margin: auto;
+  padding: 24px 18px 18px 18px;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  color: #fff;
+  position: relative;
+  animation: fadeIn 0.4s;
+}
+.profile-modal-content {
+  background: linear-gradient(135deg, #ff0000 60%, #7a3737 100%);
+  border: 2.5px solid #ff0000;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+  color: #111;
+  padding: 32px 24px 24px 24px;
+  position: relative;
+  animation: fadeIn 0.4s;
+}
+#profileModal h2 {
+  color: #005bea;
+  letter-spacing: 1px;
+}
+#profileModal h3 {
+  color: #ff9900;
+  margin-bottom: 8px;
+}
+#profileFavoritesList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+#profileFavoritesList .movie {
+  background: #232323;
+  border-radius: 8px;
+  padding: 10px;
+  min-width: 140px;
+  max-width: 180px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  color: #fff;
+  font-size: 0.98rem;
+}
+#profileFavoritesList .movie img {
+  width: 60px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+}
+#profileFavoritesList .movie span {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+#profileFavoritesList .movie button {
+  background: linear-gradient(90deg,#ff9900,#ff0000);
+  color: #fff;
+  border: none;
+  border-radius: 16px;
+  padding: 4px 12px;
+  font-size: 0.95rem;
+  margin-top: 4px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+}
+#profileFavoritesList .movie button:hover {
+  background: linear-gradient(90deg,#ff0000,#ff9900);
+  transform: scale(1.07);
+}
+#profileModal .modal-content {
+  max-width: 350px;
+}
+#favorites-section .modal-content {
+  max-width: 600px;
 }
 #loginModal input[type="text"],
 #loginModal input[type="password"] {
@@ -573,4 +664,67 @@ main {
   background: #ff9900;
   color: #222;
   transform: scale(1.07);
+}
+#closeAllMovies {
+  position: absolute;
+  top: 10px;
+  right: 18px;
+  background: none;
+  border: none;
+  font-size: 2.2rem;
+  color: #ff0000;
+  cursor: pointer;
+  z-index: 10;
+  transition: color 0.2s, transform 0.2s;
+  font-weight: bold;
+  line-height: 1;
+  padding: 0 10px;
+}
+#closeAllMovies:hover {
+  color: #fff;
+  background: #ff0000;
+  border-radius: 50%;
+  transform: scale(1.15);
+}
+#openLogin, #openRegister, #loginBtn, #registerBtn {
+  background: linear-gradient(90deg, #ff9900, #ff0000);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 28px;
+  font-size: 1.1rem;
+  margin: 8px 0 8px 0;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(255,0,0,0.15);
+  transition: background 0.3s, transform 0.2s, color 0.2s;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+#openLogin:hover, #openRegister:hover, #loginBtn:hover, #registerBtn:hover {
+  background: linear-gradient(90deg, #ff0000, #ff9900);
+  color: #fffbe7;
+  transform: scale(1.07);
+}
+#openProfile {
+  background: linear-gradient(90deg, #ff0000, #7a3737);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 28px;
+  font-size: 1.1rem;
+  margin: 8px 0 8px 0;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(255,0,0,0.15);
+  transition: background 0.3s, transform 0.2s, color 0.2s;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+#openProfile:hover {
+  background: linear-gradient(90deg, #7a3737, #ff0000);
+  color: #fffbe7;
+  transform: scale(1.07);
+}
+
+.modal-content button {
+  margin-top: 10px;
 }
