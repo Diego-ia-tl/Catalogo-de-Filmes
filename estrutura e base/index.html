@@ -5,20 +5,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo de Filmes</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="./styles.css">
 </head>
 <body> 
     <header>
+        <div id="profilePicContainer">
+            <img id="profilePic" src="" alt="Perfil" style="display:none;" />
+        </div>
         <h1>Catálogo de Filmes</h1>
         <input type="text" id="searchInput" placeholder="Buscar filme..." onkeyup="searchMovies()">
     </header>
         <button id="menuToggle">☰</button>
         <div id="sidebar">
-     <button id="themeToggle">Alternar Tema</button>
+            <button id="themeToggle">Alternar Tema</button>
+            <button id="openLogin">Login</button>
+            <button id="openRegister">Cadastro</button>
         </div>
+    <div id="loginModal" class="modal" style="display:none;">
+      <div class="modal-content">
+          <span id="closeLogin" style="float:right;cursor:pointer;">&times;</span>
+              <h2>Login</h2>
+                  <input type="text" id="loginUser" placeholder="Usuário"><br><br>
+                      <input type="password" id="loginPass" placeholder="Senha"><br><br>
+                          <button id="loginBtn">Entrar</button>
+                              <p id="loginError" style="color:red;display:none;">Usuário ou senha inválidos!</p>
+                                </div>
+                                </div>
+    <div id="registerModal" class="modal" style="display:none;">
+      <div class="modal-content">
+          <span id="closeRegister" style="float:right;cursor:pointer;">&times;</span>
+              <h2>Cadastro</h2>
+                  <input type="text" id="registerUser" placeholder="Usuário"><br><br>
+                  <input type="password" id="registerPass" placeholder="Senha"><br><br>
+                  <input type="file" id="registerPhoto" accept="image/*"><br><br>
+                  <img id="photoPreview" src="" alt="Prévia da Foto" style="display:none;max-width:100px;border-radius:50%;margin-bottom:10px;"><br>
+                  <div id="profileGallery" style="display:flex;gap:10px;justify-content:center;margin-bottom:10px;">
+                    <img class="profile-pic-option" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTW0A5JTPGVaXtcFb3nTiBuEYBBbtK2RVtRcQ&s" alt="Perfil 1" style="width:50px;height:50px;border-radius:50%;cursor:pointer;border:2px solid transparent;">
+                    <img class="profile-pic-option" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQRcW7heHKBIJCp7CcDzsi9IJC7pyqTor3s4g&s" alt="Perfil 2" style="width:50px;height:50px;border-radius:50%;cursor:pointer;border:2px solid transparent;">
+                    <img class="profile-pic-option" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMr29clmbA1BJQaOCD29HnrfcRM0ZQfAVdmA&s" alt="Perfil 3" style="width:50px;height:50px;border-radius:50%;cursor:pointer;border:2px solid transparent;">
+                    <img class="profile-pic-option" src=";">
+                  </div>
+                  <button id="registerBtn">Cadastrar</button>
+                  <p id="registerMsg" style="color:green;display:none;">Cadastro realizado!</p>
+      </div>
+    </div>
     <main id="movie-list">
     </main>
-    <script src="filmes.js"></script>
+    <script src="./app.js"></script>
 </body>
 
 </html>

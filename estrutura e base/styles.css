@@ -18,6 +18,7 @@ header {
     padding: 20px;
     text-align: center;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+    position: relative;
 }
 
 h1 {
@@ -246,7 +247,7 @@ main {
     border: none;
     cursor: pointer;
 }
-
+/* Estilizando o botão de menu */
 #menuToggle {
     position: fixed;
     top: 20px;
@@ -261,6 +262,7 @@ main {
     border-radius: 5px;
 }
 
+/* Sidebar Menu */
 #sidebar {
     position: fixed;
     left: -250px;
@@ -273,11 +275,12 @@ main {
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
 }
 
-
+/* Quando o menu estiver ativo */
 #sidebar.active {
     left: 0;
 }
 
+/* Botão dentro do menu */
 #themeToggle {
     display: block;
     width: 100%;
@@ -291,6 +294,7 @@ main {
     margin-top: 20px;
 }
 
+/* Estilização do Modo Escuro */
 .dark-mode {
     background-color: #ffffff;
     color: white;
@@ -308,4 +312,173 @@ main {
 .dark-mode #themeToggle {
     background-color: rgb(255, 255, 255);
     color: rgb(0, 0, 0);
+}
+.modal {
+  position: fixed;
+    z-index: 2000;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+    display: flex; align-items: center; justify-content: center;
+}
+.modal-content {
+     background: linear-gradient(135deg, #222 60%, #7a3737 100%);
+     padding: 30px 40px;
+     border-radius: 12px;
+     color: #fff;
+     min-width: 320px;
+     box-shadow: 0 0 30px #000;
+     position: relative;
+     border: 2px solid #ff0000;
+     animation: fadeInModal 0.5s;
+}
+#loginModal input[type="text"],
+#loginModal input[type="password"] {
+    width: 90%;
+    padding: 10px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 6px;
+    background: #333;
+    color: #fff;
+    font-size: 16px;
+    outline: none;
+    transition: box-shadow 0.3s;
+}
+#loginModal input[type="text"]:focus,
+#loginModal input[type="password"]:focus {
+    box-shadow: 0 0 8px #ff0000;
+}
+#loginBtn {
+    background: linear-gradient(90deg, #ff0000, #7a3737);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 30px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background 0.3s;
+}
+#loginBtn:hover {
+    background: linear-gradient(90deg, #7a3737, #ff0000);
+}
+#loginError {
+    color: #ff4d4d;
+    font-weight: bold;
+    margin-top: 10px;
+}
+#closeLogin {
+    color: #ff0000;
+    font-size: 28px;
+    font-weight: bold;
+    transition: color 0.2s;
+}
+#closeLogin:hover {
+    color: #fff;
+    background: #ff0000;
+    border-radius: 50%;
+    padding: 2px 8px;
+}
+@keyframes fadeInModal {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+#registerModal .modal-content {
+     background: linear-gradient(135deg, #222 60%, #7a3737 100%);
+     padding: 30px 40px;
+     border-radius: 12px;
+     color: #fff;
+     min-width: 320px;
+     box-shadow: 0 0 30px #000;
+     position: relative;
+     border: 2px solid #ff0000;
+     animation: fadeInModal 0.5s;
+}
+#registerModal input[type="text"],
+#registerModal input[type="password"] {
+    width: 90%;
+    padding: 10px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 6px;
+    background: #333;
+    color: #fff;
+    font-size: 16px;
+    outline: none;
+    transition: box-shadow 0.3s;
+}
+#registerModal input[type="text"]:focus,
+#registerModal input[type="password"]:focus {
+    box-shadow: 0 0 8px #ff0000;
+}
+#registerModal input[type="file"] {
+    margin: 10px 0;
+    color: #fff;
+}
+#registerBtn {
+    background: linear-gradient(90deg, #ff0000, #7a3737);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 30px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background 0.3s;
+}
+#registerBtn:hover {
+    background: linear-gradient(90deg, #7a3737, #ff0000);
+}
+#registerMsg {
+    color: #4dff4d;
+    font-weight: bold;
+    margin-top: 10px;
+}
+#closeRegister {
+    color: #ff0000;
+    font-size: 28px;
+    font-weight: bold;
+    transition: color 0.2s;
+}
+#closeRegister:hover {
+    color: #fff;
+    background: #ff0000;
+    border-radius: 50%;
+    padding: 2px 8px;
+}
+#photoPreview {
+    display: block;
+    margin: 0 auto 10px auto;
+    border: 2px solid #ff0000;
+    border-radius: 50%;
+    max-width: 100px;
+    max-height: 100px;
+    background: #fff;
+}
+#profileGallery {
+    margin-bottom: 10px;
+}
+.profile-pic-option {
+    border: 2px solid transparent;
+    transition: border 0.2s;
+}
+.profile-pic-option:hover {
+    border: 2px solid #ff0000;
+}
+#profilePicContainer {
+    position: absolute;
+    top: 18px;
+    right: 30px;
+    z-index: 2000;
+}
+#profilePic {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 2px solid #ff0000;
+    object-fit: cover;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    display: block;
 }
