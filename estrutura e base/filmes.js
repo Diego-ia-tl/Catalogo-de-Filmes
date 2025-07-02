@@ -1,21 +1,77 @@
-const backendUrl = '/movies';
+const backendUrl = 'https://shiny-potato-q7454gqx9xjw2x54j-3000.app.github.dev/movies';
 console.log('URL do backend utilizada:', backendUrl);
 
-function displayMovies(filteredMovies) {
-  const movieList = document.getElementById('movie-list')
-  movieList.innerHTML = ''
+let currentUser = null;
+
+function getUserFromStorage() {
+  return JSON.parse(localStorage.getItem('currentUser'));
+}
+
+function setUserToStorage(user) {
+  localStorage.setItem('currentUser', JSON.stringify(user));
+}
+
+function displayMovies(filteredMovies, showFav = true) {
+  const movieList = document.getElementById('movie-list');
+  movieList.innerHTML = '';
 
   filteredMovies.forEach(movie => {
-    const movieDiv = document.createElement('div')
-    movieDiv.classList.add('movie')
+    const movieDiv = document.createElement('div');
+    movieDiv.classList.add('movie');
+
+    let favBtn = '';
+    if (showFav && currentUser) {
+      // IDs podem ser string no JSON, então compara como string
+      const isFav = (currentUser.favorites || []).map(String).includes(String(movie.id));
+      favBtn = `<button class="fav-button" data-id="${movie.id}" style="color:${isFav ? 'gold' : '#888'}">&#9733;</button>`;
+    }
 
     movieDiv.innerHTML = `
             <img src="${movie.image}" alt="${movie.title}">
             <h2>${movie.title}</h2>
             <p class="movie-desc">${movie.description}</p>
-            <button class="trailer-button" onclick="window.open('${movie.link}', '_blank')">Ver Trailer</button>`
-    movieList.appendChild(movieDiv)
+            <button class="trailer-button" onclick="window.open('${movie.link}', '_blank')">Ver Trailer</button>
+            ${favBtn}`;
+    movieList.appendChild(movieDiv);
+  });
+
+  // Eventos de favoritar
+  if (showFav && currentUser) {
+    document.querySelectorAll('.fav-button').forEach(btn => {
+      btn.onclick = function() {
+        const movieId = String(this.getAttribute('data-id'));
+        toggleFavorite(movieId);
+      };
+    });
+  }
+}
+
+function toggleFavorite(movieId) {
+  if (!currentUser) return;
+  // IDs podem ser string no JSON, então compara como string
+  const isFav = (currentUser.favorites || []).map(String).includes(String(movieId));
+  let newFavs;
+  if (isFav) {
+    newFavs = currentUser.favorites.filter(id => String(id) !== String(movieId));
+  } else {
+    newFavs = [...(currentUser.favorites || []), movieId];
+  }
+  fetch(`https://shiny-potato-q7454gqx9xjw2x54j-3000.app.github.dev/users/${currentUser.id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ favorites: newFavs })
   })
+  .then(res => res.json())
+  .then(() => {
+    // Busca o usuário atualizado do backend para garantir consistência
+    fetch(`https://shiny-potato-q7454gqx9xjw2x54j-3000.app.github.dev/users/${currentUser.id}`)
+      .then(r => r.json())
+      .then(user => {
+        currentUser = user;
+        setUserToStorage(user);
+        fetchAndDisplayMovies();
+      });
+  });
 }
 
 function fetchAndDisplayMovies() {
@@ -56,7 +112,42 @@ function searchMovies() {
     });
 }
 
+// Função para exibir favoritos
+function showFavorites() {
+  if (!currentUser || !currentUser.favorites || currentUser.favorites.length === 0) {
+    document.getElementById('favorites-list').innerHTML = '<p>Nenhum filme favoritado.</p>';
+    document.getElementById('favorites-section').style.display = 'block';
+    return;
+  }
+  fetch(backendUrl)
+    .then(response => response.json())
+    .then(movies => {
+      // IDs podem ser string no JSON, então compara como string
+      const favMovies = movies.filter(m => (currentUser.favorites || []).map(String).includes(String(m.id)));
+      displayFavorites(favMovies);
+    });
+}
+
+function displayFavorites(favMovies) {
+  const favList = document.getElementById('favorites-list');
+  favList.innerHTML = '';
+  favMovies.forEach(movie => {
+    const div = document.createElement('div');
+    div.classList.add('movie');
+    div.innerHTML = `
+      <img src="${movie.image}" alt="${movie.title}" style="width:80px;vertical-align:middle;">
+      <span style="font-weight:bold;">${movie.title}</span>
+      <button onclick="window.open('${movie.link}', '_blank')">Ver Trailer</button>
+    `;
+    favList.appendChild(div);
+  });
+  document.getElementById('favorites-section').style.display = 'block';
+}
+
 document.addEventListener('DOMContentLoaded', function() {
+  // Recupera usuário logado do localStorage
+  currentUser = getUserFromStorage();
+  updateFavoritesBtnVisibility();
   
   const menuToggle = document.getElementById('menuToggle');
   const sidebar = document.getElementById('sidebar');
@@ -100,23 +191,29 @@ document.addEventListener('DOMContentLoaded', function() {
   loginBtn.onclick = () => {
     const user = document.getElementById('loginUser').value;
     const pass = document.getElementById('loginPass').value;
-    if (user === 'admin' && pass === '1234') {
-      loginModal.style.display = 'none';
-      loginError.style.display = 'none';
-      showProfilePic('');
-      alert('Login realizado com sucesso!');
-      return;
-    }
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-    const found = users.find(u => u.user === user && u.pass === pass);
-    if (found) {
-      loginModal.style.display = 'none';
-      loginError.style.display = 'none';
-      showProfilePic(found.photo);
-      alert('Login realizado com sucesso!');
-    } else {
-      loginError.style.display = 'block';
-    }
+    fetch('https://shiny-potato-q7454gqx9xjw2x54j-3000.app.github.dev/users')
+      .then(response => {
+        if (!response.ok) throw new Error('Erro ao buscar usuários no servidor');
+        return response.json();
+      })
+      .then(users => {
+        const found = users.find(u => u.user === user && u.pass === pass);
+        if (found) {
+          loginModal.style.display = 'none';
+          loginError.style.display = 'none';
+          showProfilePic(found.photo);
+          alert('Login realizado com sucesso!');
+          currentUser = found;
+          setUserToStorage(found);
+          fetchAndDisplayMovies();
+          updateFavoritesBtnVisibility();
+        } else {
+          loginError.style.display = 'block';
+        }
+      })
+      .catch(() => {
+        loginError.style.display = 'block';
+      });
   };
 
   
@@ -200,26 +297,67 @@ document.addEventListener('DOMContentLoaded', function() {
       setTimeout(() => { registerMsg.style.display = 'none'; }, 1500);
       return;
     }
-    let users = JSON.parse(localStorage.getItem('users') || '[]');
-    if (users.find(u => u.user === user)) {
-      registerMsg.style.display = 'block';
-      registerMsg.style.color = 'red';
-      registerMsg.textContent = 'Usuário já existe!';
-      setTimeout(() => { registerMsg.style.display = 'none'; }, 1500);
-      return;
-    }
-    users.push({ user, pass, photo });
-    localStorage.setItem('users', JSON.stringify(users));
-    registerMsg.style.display = 'block';
-    registerMsg.style.color = 'green';
-    registerMsg.textContent = 'Cadastro realizado!';
-    setTimeout(() => {
-      registerMsg.style.display = 'none';
-      registerModal.style.display = 'none';
-      document.getElementById('registerUser').value = '';
-      document.getElementById('registerPass').value = '';
-      registerPhoto.value = '';
-      photoPreview.style.display = 'none';
-    }, 1500);
+    // Verifica se usuário já existe no json-server
+    fetch('https://shiny-potato-q7454gqx9xjw2x54j-3000.app.github.dev/users?user=' + encodeURIComponent(user))
+      .then(response => response.json())
+      .then(users => {
+        if (users.length > 0) {
+          registerMsg.style.display = 'block';
+          registerMsg.style.color = 'red';
+          registerMsg.textContent = 'Usuário já existe!';
+          setTimeout(() => { registerMsg.style.display = 'none'; }, 1500);
+          return;
+        }
+        // Cadastra novo usuário no json-server
+        fetch('https://shiny-potato-q7454gqx9xjw2x54j-3000.app.github.dev/users', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user, pass, photo })
+        })
+        .then(res => {
+          if (!res.ok) throw new Error('Erro ao cadastrar usuário');
+          registerMsg.style.display = 'block';
+          registerMsg.style.color = 'green';
+          registerMsg.textContent = 'Cadastro realizado!';
+          setTimeout(() => {
+            registerMsg.style.display = 'none';
+            registerModal.style.display = 'none';
+            document.getElementById('registerUser').value = '';
+            document.getElementById('registerPass').value = '';
+            registerPhoto.value = '';
+            photoPreview.style.display = 'none';
+          }, 1500);
+        })
+        .catch(() => {
+          registerMsg.style.display = 'block';
+          registerMsg.style.color = 'red';
+          registerMsg.textContent = 'Erro ao cadastrar!';
+          setTimeout(() => { registerMsg.style.display = 'none'; }, 1500);
+        });
+      });
   };
+  // Botão de favoritos
+  const showFavBtn = document.getElementById('showFavoritesBtn');
+  const favSection = document.getElementById('favorites-section');
+  const closeFav = document.getElementById('closeFavorites');
+  if (showFavBtn) {
+    showFavBtn.onclick = showFavorites;
+  }
+  if (closeFav) {
+    closeFav.onclick = function() {
+      favSection.style.display = 'none';
+    };
+  }
+  // Exibe botão de favoritos se logado
+  if (currentUser) {
+    showFavBtn.style.display = 'block';
+  }
 });
+
+// Atualiza exibição do botão de favoritos ao logar
+function updateFavoritesBtnVisibility() {
+  const showFavBtn = document.getElementById('showFavoritesBtn');
+  if (showFavBtn) {
+    showFavBtn.style.display = currentUser ? 'block' : 'none';
+  }
+}

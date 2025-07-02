@@ -11,6 +11,7 @@
     <header>
         <div id="profilePicContainer">
             <img id="profilePic" src="" alt="Perfil" style="display:none;" />
+            <button id="showFavoritesBtn" style="display:none;margin-top:10px;">Meus Favoritos</button>
         </div>
         <h1>Catálogo de Filmes</h1>
         <input type="text" id="searchInput" placeholder="Buscar filme..." onkeyup="searchMovies()">
@@ -51,7 +52,12 @@
     </div>
     <main id="movie-list">
     </main>
-    <script src="./app.js"></script>
+    <section id="favorites-section" style="display:none;">
+      <h2>Meus Favoritos</h2>
+      <div id="favorites-list"></div>
+      <button id="closeFavorites">Fechar</button>
+    </section>
+    <script src="filmes.js"></script>
 </body>
 
 </html>

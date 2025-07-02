@@ -482,3 +482,95 @@ main {
     box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     display: block;
 }
+.fav-button {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  transition: color 0.2s;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+.fav-button:hover {
+  color: #ffd700 !important;
+  text-shadow: 0 0 8px #ffd700;
+}
+
+.trailer-button {
+  background: linear-gradient(90deg, #ff0000, #ff9900);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 18px;
+  font-size: 1rem;
+  margin-top: 10px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+  box-shadow: 0 2px 8px rgba(255,0,0,0.2);
+}
+.trailer-button:hover {
+  background: linear-gradient(90deg, #ff9900, #ff0000);
+  transform: scale(1.07);
+}
+
+#showFavoritesBtn {
+  background: linear-gradient(90deg, #ff9900, #ff0000);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 18px;
+  font-size: 1rem;
+  margin-top: 10px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+  box-shadow: 0 2px 8px rgba(255,0,0,0.2);
+}
+#showFavoritesBtn:hover {
+  background: linear-gradient(90deg, #ff0000, #ff9900);
+  transform: scale(1.07);
+}
+
+#favorites-section {
+  background: #181818;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  max-width: 600px;
+  margin: 30px auto;
+  padding: 24px 16px 16px 16px;
+  color: #fff;
+}
+#favorites-section h2 {
+  color: #ffd700;
+  margin-bottom: 18px;
+}
+#favorites-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+#favorites-list .movie {
+  background: #232323;
+  border-radius: 8px;
+  padding: 10px;
+  min-width: 180px;
+  max-width: 200px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+#closeFavorites {
+  background: #ff0000;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 18px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+}
+#closeFavorites:hover {
+  background: #ff9900;
+  color: #222;
+  transform: scale(1.07);
+}
